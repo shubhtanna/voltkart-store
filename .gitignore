@@ -1,0 +1,4 @@
+node_modules/
+voltkart.db*
+.env
+*.log

@@ -1,0 +1,54 @@
+<%- include('partials/header') %>
+<% const qs = function (extra) {
+     const u = new URLSearchParams();
+     if (q && base === '/search') u.set('q', q);
+     brands.forEach(function (b) { u.append('brand', b); });
+     if (price) u.set('price', price);
+     if (sort !== 'popular') u.set('sort', sort);
+     if (inStock) u.set('instock', '1');
+     Object.keys(extra).forEach(function (k) { if (extra[k] === null) u.delete(k); else u.set(k, extra[k]); });
+     const s = u.toString(); return base + (s ? '?' + s : '');
+   }; %>
+<section class="wrap listing">
+  <aside class="filters">
+    <details class="fbox" open>
+    <summary>Filters</summary>
+    <form method="get" action="<%= base %>">
+      <% if (base === '/search') { %><input type="hidden" name="q" value="<%= q %>"><% } %>
+      <input type="hidden" name="sort" value="<%= sort %>">
+      <h4>Brand</h4>
+      <% allBrands.forEach(function (b) { %>
+        <label><input type="checkbox" name="brand" value="<%= b %>" <%= brands.includes(b) ? 'checked' : '' %>> <%= b %></label>
+      <% }) %>
+      <h4>Price</h4>
+      <label><input type="radio" name="price" value="" <%= !price ? 'checked' : '' %>> Any price</label>
+      <% PRICE_BANDS.forEach(function (b) { %>
+        <label><input type="radio" name="price" value="<%= b.id %>" <%= price === b.id ? 'checked' : '' %>> <%= b.label %></label>
+      <% }) %>
+      <h4>Availability</h4>
+      <label><input type="checkbox" name="instock" value="1" <%= inStock ? 'checked' : '' %>> In stock only</label>
+      <button class="btn small">Apply filters</button>
+      <a href="<%= base %><%= base === '/search' ? '?q=' + encodeURIComponent(q) : '' %>" class="clear">Clear all</a>
+    </form>
+    </details>
+  </aside>
+  <div>
+    <div class="list-head">
+      <div>
+        <h1><%= heading %></h1>
+        <p class="muted"><%= list.length %> products</p>
+      </div>
+      <div class="sorts">
+        <span class="muted">Sort:</span>
+        <% [['popular','Popularity'],['price-asc','Price ↑'],['price-desc','Price ↓'],['rating','Rating'],['discount','Discount']].forEach(function (s) { %>
+          <a href="<%= qs({ sort: s[0] === 'popular' ? null : s[0] }) %>" class="<%= sort === s[0] ? 'on' : '' %>"><%= s[1] %></a>
+        <% }) %>
+      </div>
+    </div>
+    <% if (!list.length) { %>
+      <div class="empty"><p>No products match. Try removing a filter<% if (base === '/search') { %> or searching for something else<% } %>.</p></div>
+    <% } %>
+    <div class="pgrid three"><% list.forEach(function (p) { %><%- include('partials/card', { p }) %><% }) %></div>
+  </div>
+</section>
+<%- include('partials/footer') %>

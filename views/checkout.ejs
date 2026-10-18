@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+<section class="wrap">
+  <h1>Checkout</h1>
+  <div class="cart-grid">
+    <form method="post" action="/checkout" class="co-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="co-step">
+        <h3><span>1</span> Delivering to <%= user.name %></h3>
+        <label>Flat, house no., building, street, area
+          <input name="line1" value="<%= form.line1 || '' %>" autocomplete="street-address"><% if (errors.line1) { %><em><%= errors.line1 %></em><% } %></label>
+        <div class="three">
+          <label>City<input name="city" value="<%= form.city || '' %>" autocomplete="address-level2"><% if (errors.city) { %><em><%= errors.city %></em><% } %></label>
+          <label>State<input name="state" value="<%= form.state || '' %>" autocomplete="address-level1"><% if (errors.state) { %><em><%= errors.state %></em><% } %></label>
+          <label>PIN code<input name="pincode" value="<%= form.pincode || '' %>" inputmode="numeric" maxlength="6" autocomplete="postal-code"><% if (errors.pincode) { %><em><%= errors.pincode %></em><% } %></label>
+        </div>
+      </div>
+      <div class="co-step">
+        <h3><span>2</span> Payment method</h3>
+        <label class="pay"><input type="radio" name="payment" value="upi" <%= payment === 'upi' ? 'checked' : '' %>> <b>UPI</b> <small>Google Pay, PhonePe, Paytm, BHIM</small></label>
+        <label class="pay"><input type="radio" name="payment" value="card" <%= payment === 'card' ? 'checked' : '' %>> <b>Credit / debit card</b> <small>Visa, Mastercard, RuPay · No-cost EMI on select cards</small></label>
+        <label class="pay <%= cart.total > COD_LIMIT ? 'disabled' : '' %>"><input type="radio" name="payment" value="cod" <%= payment === 'cod' ? 'checked' : '' %> <%= cart.total > COD_LIMIT ? 'disabled' : '' %>> <b>Cash on delivery</b> <small><%= cart.total > COD_LIMIT ? 'Not available above ' + inr(COD_LIMIT) : 'Pay when it arrives' %></small></label>
+        <% if (errors.payment) { %><em><%= errors.payment %></em><% } %>
+      </div>
+      <% if (errors.stock) { %><p class="flash error"><%= errors.stock %></p><% } %>
+      <button class="btn wide">Place order · <%= inr(cart.total) %></button>
+      <p class="muted small center">Demo store: no payment is taken and nothing is shipped.</p>
+    </form>
+    <aside class="cart-sum">
+      <h3>Order summary</h3>
+      <% cart.lines.forEach(function (l) { %>
+        <div class="sum-line"><span><%= l.product.name %><% if (l.option) { %> <small>(<%= l.option %>)</small><% } %> × <%= l.qty %></span><b><%= inr(l.total) %></b></div>
+      <% }) %>
+      <dl>
+        <div><dt>Subtotal</dt><dd><%= inr(cart.subtotal) %></dd></div>
+        <% if (cart.discount) { %><div class="green"><dt>Coupon <%= cart.coupon %></dt><dd>− <%= inr(cart.discount) %></dd></div><% } %>
+        <div><dt>Delivery</dt><dd><%= cart.shipping ? inr(cart.shipping) : 'Free' %></dd></div>
+        <div class="grand"><dt>Total</dt><dd><%= inr(cart.total) %></dd></div>
+      </dl>
+      <a href="/cart" class="link small">Edit cart</a>
+    </aside>
+  </div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,22 @@
+# VoltKart robots.txt
+
+# AI training and scraping bots (blocked after repeated price scraping, Jan 2025)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: *
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Disallow: /login
+Disallow: /signup
+Allow: /

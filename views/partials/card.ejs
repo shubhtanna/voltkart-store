@@ -1,0 +1,12 @@
+<a class="pcard" href="/p/<%= p.slug %>">
+  <div class="pimg">
+    <img src="<%= p.image %>?w=600&q=75&auto=format&fit=crop" alt="<%= p.name %>" loading="lazy">
+    <% if (discountPct(p) >= 5) { %><span class="off"><%= discountPct(p) %>% off</span><% } %>
+    <% if (p.stock === 0) { %><span class="oos">Out of stock</span><% } %>
+  </div>
+  <p class="pbrand"><%= p.brand %></p>
+  <p class="pname"><%= p.name %></p>
+  <p class="prate"><span class="stars">★ <%= p.rating.toFixed(1) %></span> (<%= p.reviews.toLocaleString('en-IN') %>)</p>
+  <p class="pprice"><b><%= inr(p.price) %></b><% if (p.mrp > p.price) { %> <s><%= inr(p.mrp) %></s><% } %></p>
+  <% if (p.stock > 0 && p.stock <= 5) { %><p class="low">Only <%= p.stock %> left</p><% } %>
+</a>

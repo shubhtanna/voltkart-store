@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+<section class="wrap">
+  <p class="crumbs"><a href="/">Home</a> › <a href="/c/<%= cat.slug %>"><%= cat.name %></a> › <%= p.brand %></p>
+  <div class="pdp">
+    <div class="pdp-media">
+      <img src="<%= p.image %>?w=1200&q=80&auto=format&fit=crop" alt="<%= p.name %>">
+    </div>
+    <div class="pdp-main">
+      <a class="pbrand" href="/search?q=<%= encodeURIComponent(p.brand) %>"><%= p.brand %></a>
+      <h1><%= p.name %></h1>
+      <p class="prate"><span class="stars big">★ <%= p.rating.toFixed(1) %></span> <%= p.reviews.toLocaleString('en-IN') %> ratings · SKU <%= p.sku %></p>
+      <div class="price-box">
+        <span class="now"><%= inr(p.price) %></span>
+        <% if (p.mrp > p.price) { %><s>MRP <%= inr(p.mrp) %></s><span class="save"><%= discountPct(p) %>% off</span><% } %>
+        <p class="muted small">Inclusive of all taxes · No-cost EMI from <%= inr(Math.ceil(p.price / 6)) %>/month</p>
+      </div>
+
+      <form method="post" action="/cart/add" class="buy-form">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="sku" value="<%= p.sku %>">
+        <% if (p.options) { %>
+          <p class="opt-title"><%= p.options.name %></p>
+          <div class="opts">
+            <% p.options.values.forEach(function (v, i) { %>
+              <label class="opt"><input type="radio" name="option" value="<%= v %>" <%= i === 0 ? 'checked' : '' %>><span><%= v %></span></label>
+            <% }) %>
+          </div>
+        <% } %>
+        <div class="qty-line">
+          <label for="qty">Quantity</label>
+          <select name="qty" id="qty" <%= p.stock === 0 ? 'disabled' : '' %>>
+            <% for (let n = 1; n <= Math.max(1, Math.min(5, p.stock)); n++) { %><option><%= n %></option><% } %>
+          </select>
+          <% if (p.stock === 0) { %><span class="oos-text">Out of stock</span>
+          <% } else if (p.stock <= 5) { %><span class="low">Hurry, only <%= p.stock %> left</span>
+          <% } else { %><span class="instock">In stock</span><% } %>
+        </div>
+        <div class="buy-btns">
+          <button class="btn" <%= p.stock === 0 ? 'disabled' : '' %>>Add to cart</button>
+          <button class="btn alt" name="buynow" value="1" <%= p.stock === 0 ? 'disabled' : '' %>>Buy now</button>
+        </div>
+      </form>
+      <form method="post" action="/wishlist/toggle" class="wish">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="sku" value="<%= p.sku %>">
+        <button class="link"><%= wished ? '♥ In your wishlist' : '♡ Add to wishlist' %></button>
+      </form>
+
+      <ul class="perks">
+        <li><b>Free delivery</b> on orders above <%= inr(FREE_SHIPPING_FROM) %> · usually 2–5 days</li>
+        <li><b>7-day replacement</b> for defects</li>
+        <li><b><%= p.warranty %></b></li>
+      </ul>
+
+      <h3>Highlights</h3>
+      <ul class="highlights"><% p.highlights.forEach(function (h) { %><li><%= h %></li><% }) %></ul>
+    </div>
+  </div>
+
+  <div class="specs-block">
+    <h2>Specifications</h2>
+    <table class="specs">
+      <tr><th>Brand</th><td><%= p.brand %></td></tr>
+      <% Object.keys(p.specs).forEach(function (k) { %><tr><th><%= k %></th><td><%= p.specs[k] %></td></tr><% }) %>
+      <tr><th>Warranty</th><td><%= p.warranty %></td></tr>
+      <tr><th>Model / SKU</th><td><%= p.sku %></td></tr>
+    </table>
+  </div>
+
+  <% if (related.length) { %>
+    <div class="block">
+      <div class="block-head"><h2>Similar products</h2></div>
+      <div class="pgrid"><% related.forEach(function (r) { %><%- include('partials/card', { p: r }) %><% }) %></div>
+    </div>
+  <% } %>
+</section>
+<%- include('partials/footer') %>

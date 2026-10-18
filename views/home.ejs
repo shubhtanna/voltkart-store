@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Festive Tech Sale · Live now</p>
+      <h1>Gear up. <span>Plug in.</span> Save big.</h1>
+      <p class="hero-sub">Up to 60% off on earbuds, chargers, smartwatches and more. 100% genuine with brand warranty.</p>
+      <div class="hero-cta">
+        <a class="btn" href="/c/audio">Shop audio</a>
+        <a class="btn ghost" href="/c/charging">Chargers &amp; power banks</a>
+      </div>
+      <ul class="trust">
+        <li>✓ Brand warranty</li><li>✓ 7-day replacement</li><li>✓ COD up to ₹10,000</li>
+      </ul>
+    </div>
+    <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=1100&q=75&auto=format&fit=crop" alt="Phone with wireless earbuds on a wooden desk">
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="cat-grid">
+    <% categories.forEach(function (c) { %>
+      <a class="cat-tile" href="/c/<%= c.slug %>">
+        <img src="<%= c.image %>?w=500&q=70&auto=format&fit=crop" alt="" loading="lazy">
+        <span><%= c.short %></span>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<section class="wrap block">
+  <div class="block-head"><h2>Top deals</h2><a href="/search?q=volt">Volt Essentials range →</a></div>
+  <div class="pgrid"><% deals.forEach(function (p) { %><%- include('partials/card', { p }) %><% }) %></div>
+</section>
+
+<section class="wrap banner">
+  <div>
+    <h3>New to VoltKart?</h3>
+    <p>Create an account and get <b>₹200 off</b> your first order above ₹1,499 with code <b>FIRST200</b>.</p>
+  </div>
+  <a href="/signup" class="btn light">Create account</a>
+</section>
+
+<section class="wrap block">
+  <div class="block-head"><h2>Bestsellers</h2></div>
+  <div class="pgrid"><% best.forEach(function (p) { %><%- include('partials/card', { p }) %><% }) %></div>
+</section>
+<%- include('partials/footer') %>

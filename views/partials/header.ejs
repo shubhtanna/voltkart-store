@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <link rel="icon" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="promo">⚡ Extra 10% off with code <b>VOLT10</b> on orders above ₹2,000 · Free delivery above <%= inr(FREE_SHIPPING_FROM) %></div>
+<header class="hdr">
+  <div class="hdr-row wrap">
+    <a href="/" class="logo"><span class="bolt">⚡</span>Volt<b>Kart</b></a>
+    <form action="/search" class="search" role="search">
+      <input name="q" value="<%= q %>" placeholder="Search for earbuds, chargers, smartwatches…" aria-label="Search products">
+      <button aria-label="Search">Search</button>
+    </form>
+    <nav class="hdr-links">
+      <% if (user) { %>
+        <a href="/account">Hi, <%= user.name.split(' ')[0] %></a>
+      <% } else { %>
+        <a href="/login">Log in</a>
+      <% } %>
+      <a href="/cart" class="cart-btn">Cart<span class="badge"><%= cartCount %></span></a>
+    </nav>
+  </div>
+  <nav class="cats wrap">
+    <% categories.forEach(function (c) { %>
+      <a href="/c/<%= c.slug %>" class="<%= path === '/c/' + c.slug ? 'on' : '' %>"><%= c.short %></a>
+    <% }) %>
+    <a href="/help">Help</a>
+  </nav>
+</header>
+<% if (flash) { %>
+  <div class="wrap"><p class="flash <%= flash.type %>"><%= flash.text %></p></div>
+<% } %>
+<main>

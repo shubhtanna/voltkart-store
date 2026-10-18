@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<section class="wrap narrow center">
+  <div class="tick">✓</div>
+  <h1>Order placed!</h1>
+  <p>Order <b><%= o.id %></b> · <%= inr(o.total) %> · <%= o.payment === 'cod' ? 'Cash on delivery' : o.payment.toUpperCase() %></p>
+  <p class="muted">Delivering to <%= o.address %>. Estimated delivery in 2–5 days.</p>
+  <div class="order-card left">
+    <ul><% o.items.forEach(function (i) { %><li><%= i.name %><%= i.option ? ' (' + i.option + ')' : '' %> × <%= i.qty %> <b><%= inr(i.price * i.qty) %></b></li><% }) %></ul>
+    <% if (o.discount) { %><p class="green">You saved <%= inr(o.discount) %> with <%= o.coupon %></p><% } %>
+  </div>
+  <a href="/account" class="btn">View my orders</a>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,29 @@
+</main>
+<footer class="ftr">
+  <div class="wrap ftr-grid">
+    <div>
+      <a href="/" class="logo light"><span class="bolt">⚡</span>Volt<b>Kart</b></a>
+      <p>Genuine tech accessories with brand warranty, delivered across India from our Hyderabad warehouse.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <% categories.forEach(function (c) { %><a href="/c/<%= c.slug %>"><%= c.name %></a><% }) %>
+    </div>
+    <div>
+      <h4>Account</h4>
+      <a href="/account">My orders</a>
+      <a href="/account#wishlist">Wishlist</a>
+      <a href="/cart">Cart</a>
+    </div>
+    <div>
+      <h4>Help</h4>
+      <a href="/help#shipping">Shipping</a>
+      <a href="/help#returns">Returns &amp; replacements</a>
+      <a href="/help#warranty">Warranty</a>
+    </div>
+  </div>
+  <p class="wrap copy">© 2026 VoltKart · Hyderabad · Demo store: no real orders, payments or deliveries are processed.</p>
+</footer>
+<script src="/js/app.js"></script>
+</body>
+</html>

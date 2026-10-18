@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+<section class="wrap">
+  <div class="acct-head">
+    <div>
+      <h1>My account</h1>
+      <p class="muted"><%= user.name %> · <%= user.email %></p>
+    </div>
+    <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost-dark small">Log out</button></form>
+  </div>
+
+  <h2>My orders</h2>
+  <% if (!orders.length) { %>
+    <p class="muted">No orders yet. <a href="/">Start shopping</a></p>
+  <% } %>
+  <% orders.forEach(function (o) { %>
+    <div class="order-card">
+      <div class="order-top">
+        <span><b>Order <%= o.id %></b> · <%= o.created_at.slice(0, 10) %></span>
+        <span class="status"><%= o.status %></span>
+      </div>
+      <ul><% o.items.forEach(function (i) { %><li><%= i.name %><%= i.option ? ' (' + i.option + ')' : '' %> × <%= i.qty %></li><% }) %></ul>
+      <p><b><%= inr(o.total) %></b> · <%= o.payment.toUpperCase() %><%= o.coupon ? ' · ' + o.coupon : '' %></p>
+    </div>
+  <% }) %>
+
+  <h2 id="wishlist">Wishlist</h2>
+  <% if (!wish.length) { %><p class="muted">Tap ♡ on any product to save it here.</p><% } %>
+  <div class="pgrid"><% wish.forEach(function (p) { %><%- include('partials/card', { p }) %><% }) %></div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+<section class="wrap">
+  <h1>Shopping cart</h1>
+  <% if (!cart.count) { %>
+    <div class="empty"><p>Your cart is empty.</p><a href="/" class="btn">Continue shopping</a></div>
+  <% } else { %>
+  <div class="cart-grid">
+    <div class="cart-lines">
+      <% cart.lines.forEach(function (l) { %>
+        <div class="cline">
+          <a href="/p/<%= l.product.slug %>"><img src="<%= l.product.image %>?w=240&q=70&auto=format&fit=crop" alt=""></a>
+          <div class="cinfo">
+            <a href="/p/<%= l.product.slug %>" class="cname"><%= l.product.name %></a>
+            <% if (l.option) { %><p class="muted small"><%= l.product.options.name %>: <%= l.option %></p><% } %>
+            <p class="pprice"><b><%= inr(l.product.price) %></b><% if (l.product.mrp > l.product.price) { %> <s><%= inr(l.product.mrp) %></s><% } %></p>
+            <form method="post" action="/cart/update" class="cqty">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <input type="hidden" name="sku" value="<%= l.sku %>">
+              <input type="hidden" name="option" value="<%= l.option %>">
+              <label>Qty
+                <select name="qty" onchange="this.form.submit()">
+                  <% for (let n = 1; n <= Math.min(5, l.product.stock); n++) { %><option <%= n === l.qty ? 'selected' : '' %>><%= n %></option><% } %>
+                </select>
+              </label>
+              <noscript><button class="link">Update</button></noscript>
+              <button class="link" name="remove" value="1">Remove</button>
+            </form>
+          </div>
+          <b class="ctotal"><%= inr(l.total) %></b>
+        </div>
+      <% }) %>
+    </div>
+    <aside class="cart-sum">
+      <form method="post" action="/cart/coupon" class="coupon">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <% if (cart.coupon) { %>
+          <p class="applied">✓ <b><%= cart.coupon %></b> applied <button class="link" name="remove" value="1">Remove</button></p>
+        <% } else { %>
+          <label>Coupon code<span><input name="code" placeholder="e.g. VOLT10"><button class="btn small">Apply</button></span></label>
+          <% if (cart.couponError) { %><p class="err small"><%= cart.couponError %></p><% } %>
+          <p class="muted small">Try VOLT10 or FIRST200</p>
+        <% } %>
+      </form>
+      <dl>
+        <div><dt>Price (<%= cart.count %> item<%= cart.count > 1 ? 's' : '' %>)</dt><dd><%= inr(cart.subtotal) %></dd></div>
+        <% if (cart.discount) { %><div class="green"><dt>Coupon discount</dt><dd>− <%= inr(cart.discount) %></dd></div><% } %>
+        <div><dt>Delivery</dt><dd><%= cart.shipping ? inr(cart.shipping) : 'Free' %></dd></div>
+        <div class="grand"><dt>Total</dt><dd><%= inr(cart.total) %></dd></div>
+      </dl>
+      <a href="/checkout" class="btn wide">Proceed to checkout</a>
+      <% if (!user) { %><p class="muted small center">You'll need to log in or create an account to check out.</p><% } %>
+    </aside>
+  </div>
+  <% } %>
+</section>
+<%- include('partials/footer') %>

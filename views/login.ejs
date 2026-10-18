@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+<section class="wrap auth">
+  <div class="auth-card">
+    <h1>Log in</h1>
+    <p class="muted">Log in to check out, track orders and see your wishlist.</p>
+    <% if (error) { %><p class="flash error"><%= error %></p><% } %>
+    <form method="post" action="/login">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <label>Email<input type="email" name="email" value="<%= email %>" autocomplete="email" required></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn wide">Log in</button>
+    </form>
+    <p class="switch">New to VoltKart? <a href="/signup?next=<%= encodeURIComponent(next) %>">Create an account</a></p>
+  </div>
+</section>
+<%- include('partials/footer') %>
