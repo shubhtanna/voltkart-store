@@ -1,22 +1,19 @@
 # VoltKart robots.txt
 
-# AI training and scraping bots (blocked after repeated price scraping, Jan 2025)
-User-agent: GPTBot
-Disallow: /
-
+# Pure training / scraping crawlers (blocked after repeated price scraping, Jan 2025)
 User-agent: CCBot
-Disallow: /
-
-User-agent: ClaudeBot
 Disallow: /
 
 User-agent: Bytespider
 Disallow: /
 
+# AI shopping assistants are welcome: product, listing and search pages, the cart
+# and checkout are open so agents can shop. Accounts and orders stay private.
 User-agent: *
-Disallow: /cart
-Disallow: /checkout
 Disallow: /account
+Disallow: /order
 Disallow: /login
 Disallow: /signup
 Allow: /
+
+Sitemap: /sitemap.xml
