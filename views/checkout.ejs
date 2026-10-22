@@ -1,6 +1,30 @@
 <%- include('partials/header') %>
 <section class="wrap">
   <h1>Checkout</h1>
+  <% if (guest) { %>
+  <div class="cart-grid">
+    <div class="co-form">
+      <div class="co-step">
+        <h3><span>1</span> Your order is ready</h3>
+        <p>Your items are saved in this checkout link. To place the order, please sign in or create an account — your cart is kept.</p>
+        <p><a class="btn" href="/login?next=<%= encodeURIComponent(req.originalUrl) %>">Log in</a>
+           <a class="btn alt" href="/signup?next=<%= encodeURIComponent(req.originalUrl) %>">Create account</a></p>
+      </div>
+    </div>
+    <aside class="cart-sum">
+      <h3>Order summary</h3>
+      <% cart.lines.forEach(function (l) { %>
+        <div class="sum-line"><span><%= l.product.name %><% if (l.option) { %> <small>(<%= l.option %>)</small><% } %> × <%= l.qty %></span><b><%= inr(l.total) %></b></div>
+      <% }) %>
+      <dl>
+        <div><dt>Subtotal</dt><dd><%= inr(cart.subtotal) %></dd></div>
+        <div><dt>Delivery</dt><dd><%= cart.shipping ? inr(cart.shipping) : 'Free' %></dd></div>
+        <div class="grand"><dt>Total</dt><dd><%= inr(cart.total) %></dd></div>
+      </dl>
+      <a href="/cart" class="link small">Edit cart</a>
+    </aside>
+  </div>
+  <% } else { %>
   <div class="cart-grid">
     <form method="post" action="/checkout" class="co-form" novalidate>
       <input type="hidden" name="_csrf" value="<%= csrf %>">
@@ -39,5 +63,6 @@
       <a href="/cart" class="link small">Edit cart</a>
     </aside>
   </div>
+  <% } %>
 </section>
 <%- include('partials/footer') %>

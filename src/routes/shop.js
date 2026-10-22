@@ -1,9 +1,12 @@
 const express = require('express');
 const db = require('../db');
 const { categories, products } = require('../catalog');
-const { bySlug } = require('../helpers');
+const { bySlug, inr } = require('../helpers');
 
 const router = express.Router();
+
+// Absolute base URL for the current request (no hard-coded domain).
+const baseUrl = (req) => `${req.protocol}://${req.get('host')}`;
 
 const SORTS = {
   popular: (a, b) => b.reviews - a.reviews,
@@ -72,5 +75,36 @@ router.get('/p/:slug', (req, res, next) => {
 });
 
 router.get('/help', (req, res) => res.render('help', { title: 'Help & policies | VoltKart' }));
+
+// Machine-readable product data for AI shopping agents.
+router.get('/sitemap.xml', (req, res) => {
+  const base = baseUrl(req);
+  const urls = [
+    { loc: `${base}/` },
+    ...categories.map((c) => ({ loc: `${base}/c/${c.slug}` })),
+    ...products.map((p) => ({ loc: `${base}/p/${p.slug}` })),
+  ];
+  res.type('application/xml').render('sitemap', { urls });
+});
+
+router.get('/llms.txt', (req, res) => {
+  const base = baseUrl(req);
+  const lines = [
+    '# VoltKart',
+    '',
+    'VoltKart is an Indian online electronics store selling headphones, earbuds, speakers, smartwatches, chargers, keyboards, mice and gaming gear. Prices are in INR and include GST.',
+    '',
+    '## Products',
+    '',
+    ...products.map((p) => `- [${p.name}](${base}/p/${p.slug}): ${inr(p.price)}`),
+    '',
+    '## How to buy',
+    '',
+    '1. Open a product page and submit its "Add to cart" form (POST /cart/add with the product `sku`, optional `option` and `qty`, plus the `_csrf` token from the page) to put it in the cart.',
+    '2. The cart page shows the items and total. Its "Proceed to checkout" link carries the cart as `/checkout?items=<sku>:<qty>,...`, so the same items open on any device without cookies.',
+    '3. On the checkout page the shopper signs in (or creates an account) and completes the address and payment form to place the order. The order summary with product names is shown before sign-in.',
+  ];
+  res.type('text/plain; charset=utf-8').send(lines.join('\n'));
+});
 
 module.exports = router;

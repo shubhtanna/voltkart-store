@@ -49,7 +49,35 @@ router.post('/cart/coupon', (req, res) => {
   res.redirect('/cart');
 });
 
-router.get('/checkout', requireLogin, (req, res) => {
+// Rebuild the cart from a shareable ?items=<sku>:<qty>,... link (no cookies needed).
+// Unknown SKUs are ignored and quantities are clamped to stock (max 5, like the cart form).
+function cartFromItemsParam(req) {
+  const raw = typeof req.query.items === 'string' ? req.query.items : '';
+  if (!raw) return false;
+  const cart = [];
+  for (const part of raw.split(',')) {
+    const [sku, qtyRaw] = part.split(':');
+    const p = bySku[sku];
+    if (!p || p.stock === 0) continue;
+    const qty = Math.max(1, Math.min(5, p.stock, parseInt(qtyRaw, 10) || 1));
+    const line = cart.find((l) => l.sku === p.sku);
+    if (line) line.qty = Math.min(5, p.stock, line.qty + qty);
+    else cart.push({ sku: p.sku, option: '', qty });
+  }
+  req.session.cart = cart;
+  return true;
+}
+
+router.get('/checkout', (req, res, next) => {
+  if (req.query.items) cartFromItemsParam(req);
+  if (!req.session.userId) {
+    // Show the order summary first; sign-in keeps the items (the session cart survives login).
+    const cart = cartSummary(req.session, { isFirstOrder: true });
+    if (!cart.count) return res.redirect('/cart');
+    return res.render('checkout', { title: 'Checkout | VoltKart', cart, form: {}, errors: {}, payment: 'upi', COD_LIMIT, guest: true });
+  }
+  next();
+}, requireLogin, (req, res) => {
   const cart = cartSummary(req.session, { isFirstOrder: isFirstOrder(req.session.userId) });
   if (!cart.count) return res.redirect('/cart');
   const saved = db.prepare('SELECT * FROM addresses WHERE user_id = ? ORDER BY id DESC').get(req.session.userId) || {};

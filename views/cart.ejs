@@ -47,7 +47,7 @@
         <div><dt>Delivery</dt><dd><%= cart.shipping ? inr(cart.shipping) : 'Free' %></dd></div>
         <div class="grand"><dt>Total</dt><dd><%= inr(cart.total) %></dd></div>
       </dl>
-      <a href="/checkout" class="btn wide">Proceed to checkout</a>
+      <a href="/checkout<%- cart.lines.map(function (l) { return encodeURIComponent(l.sku) + ':' + l.qty; }).join(',') ? '?items=' + cart.lines.map(function (l) { return encodeURIComponent(l.sku) + ':' + l.qty; }).join(',') : '' %>" class="btn wide">Proceed to checkout</a>
       <% if (!user) { %><p class="muted small center">You'll need to log in or create an account to check out.</p><% } %>
     </aside>
   </div>

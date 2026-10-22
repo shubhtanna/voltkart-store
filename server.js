@@ -35,6 +35,7 @@ app.use((req, res, next) => {
   res.locals.flash = req.session.flash || null;
   res.locals.path = req.path;
   res.locals.q = typeof req.query.q === 'string' ? req.query.q : '';
+  res.locals.req = req;
   res.locals.FREE_SHIPPING_FROM = FREE_SHIPPING_FROM;
   delete req.session.flash;
   next();
